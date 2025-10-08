@@ -1,24 +1,24 @@
 <template>
   <div class="game-container">
     <div class="game-page">
-      <h1>🔴 LASER LOCKDOWN - SECURITY PROTOCOL</h1>
+      <h1>🔍 CYBER INVESTIGATION</h1>
       
       <div class="mission-briefing">
-        <p class="location"><strong>Locatie:</strong> 2.09 - Beveiligingscentrum</p>
-        <p class="objective"><strong>Missie:</strong> Ontwijken van lasers</p>
+        <p class="location"><strong>Locatie:</strong> 2.09 - Cybersecurity Lab</p>
+        <p class="objective"><strong>Missie:</strong> Haal 15 punten</p>
       </div>
 
-      <div class="laser-challenge">
-        <h3>LASER SECURITY NAVIGATION PROTOCOL</h3>
+      <div class="cyber-challenge">
+        <h3>💻 Digital Forensics Protocol</h3>
         <div class="instructions">
-          <p><strong>🔴 Concept:</strong> Navigeer door het beveiligde laserrooster zonder detectie.</p>
-          <p><strong>🎯 Strategieën:</strong> Bestudeer patronen, tijd je bewegingen perfect.</p>
-          <p><strong>🔓 Doel:</strong> Bereik het einde zonder alarmen te activeren!</p>
+          <p><strong>🔐 Concept:</strong> Analyseer gehackte systemen en verzamel digitale bewijzen in deze geavanceerde cybersecurity-omgeving.</p>
+          <p><strong>⚡ Controles:</strong> Gebruik forensische tools om verborgen bestanden te ontdekken, metadata te analyseren, en netwerklogboeken te onderzoeken.</p>
+          <p><strong>🎯 Doel:</strong> Bereik 15 punten door succesvol de cyber-toegangscode te kraken!</p>
         </div>
         
         <div class="code-input-section">
-          <p class="instruction">Voer de laser-toegangscode in:</p>
-          <div class="laser-access-container">
+          <p class="instruction">Voer de cyber-toegangscode in:</p>
+          <div class="cyber-access-container">
             <input 
               v-model="enteredCode" 
               type="text" 
@@ -26,7 +26,7 @@
               class="code-input"
               @keyup.enter="checkCode"
             />
-            <button @click="checkCode" class="laser-button">EXECUTE LOCKDOWN</button>
+            <button @click="checkCode" class="connect-button">DECRYPT ACCESS</button>
           </div>
         </div>
       </div>
@@ -44,14 +44,14 @@ import { db } from "@/firebase";
 import { updateDoc, query, where, getDocs, collection, doc } from "firebase/firestore";
 
 export default {
-  name: "LaserLockdown",
+  name: "CyberCluesGame",
   data() {
     return {
-      correctCode: "Kablam",
+      correctCode: "2376",
       enteredCode: "",
       errorMessage: "",
       successMessage: "",
-      gameimages: [new URL('@/assets/game4/bom.png', import.meta.url).href, new URL('@/assets/game4/bom2.png', import.meta.url).href]
+      gameimages: [new URL('@/assets/game1/digitaltwin1.png', import.meta.url).href, new URL('@/assets/game1/digitaltwin2.png', import.meta.url).href]
     };
   },
   setup() {
@@ -63,11 +63,11 @@ export default {
   methods: {
     async checkCode() {
       if (this.enteredCode.toUpperCase() === this.correctCode.toUpperCase()) {
-        this.successMessage = "🎉 Lockdown succesvol! Laser protocol voltooid!";
+        this.successMessage = "🎉 Cyber toegang verkregen! Digital forensics protocol voltooid!";
         this.errorMessage = "";
         
         // Update voortgang in Pinia store en Firestore
-        this.gameStore.completeGame("game4completed");
+        this.gameStore.completeGame("game1completed");
 
         try {
           const gameInstanceRef = collection(db, "gameinstances");
@@ -76,10 +76,10 @@ export default {
 
           if (!querySnapshot.empty) {
             const playerDoc = querySnapshot.docs[0];
-            await updateDoc(playerDoc.ref, { game4completed: true });
+            await updateDoc(playerDoc.ref, { game1completed: true });
 
             // Zet het spel opnieuw beschikbaar
-            const gameRef = doc(db, "games", "game4");
+            const gameRef = doc(db, "games", "game1");
             await updateDoc(gameRef, { available: true });
           } else {
             console.error("Speler niet gevonden in Firestore!");
@@ -93,7 +93,7 @@ export default {
           this.router.push("/snowowl");
         }, 2000);
       } else {
-        this.errorMessage = "Lockdown mislukt! Controleer je laser toegangscode.";
+        this.errorMessage = "Cyber toegang geweigerd! Heractiveer je forensische protocol.";
         this.successMessage = "";
       }
     }
@@ -104,7 +104,7 @@ export default {
 <style scoped>
 .game-container {
   padding: 20px;
-  background: linear-gradient(135deg, #2d0a00 0%, #4d1500 50%, #3d1000 100%);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1e3c72 50%, #2a5298 100%);
   background-size: cover;
   min-height: 100vh;
   display: flex;
@@ -116,11 +116,11 @@ export default {
 .game-page {
   text-align: center;
   padding: 30px;
-  background: linear-gradient(135deg, #2d1100 0%, #4d2200 50%, #3d1a00 100%);
-  color: #ff4500;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0a0a0a 100%);
+  color: #00FFFF;
   font-family: 'Orbitron', sans-serif;
-  border: 4px solid #ff4500;
-  box-shadow: 0 0 30px #ff4500, inset 0 0 20px rgba(255, 69, 0, 0.1);
+  border: 4px solid #00FFFF;
+  box-shadow: 0 0 30px #00FFFF, inset 0 0 20px rgba(0, 255, 255, 0.1);
   max-width: 700px;
   margin: 30px;
   border-radius: 20px;
@@ -129,18 +129,18 @@ export default {
 }
 
 .game-page h1 {
-  color: #ff4500;
-  text-shadow: 0 0 20px #ff4500;
+  color: #00FFFF;
+  text-shadow: 0 0 20px #00FFFF;
   margin-bottom: 25px;
   font-size: 2.2em;
   font-weight: bold;
 }
 
 .mission-briefing {
-  background: rgba(255, 69, 0, 0.1);
+  background: rgba(0, 255, 255, 0.1);
   padding: 20px;
   border-radius: 15px;
-  border: 2px solid #ff4500;
+  border: 2px solid #00FFFF;
   margin: 20px 0;
   text-align: left;
 }
@@ -150,17 +150,17 @@ export default {
   font-size: 1.1em;
 }
 
-.laser-challenge {
+.cyber-challenge {
   background: rgba(0, 0, 0, 0.3);
   padding: 25px;
   border-radius: 15px;
-  border-left: 6px solid #ff4500;
+  border-left: 6px solid #00FFFF;
   margin: 25px 0;
   text-align: left;
 }
 
-.laser-challenge h3 {
-  color: #ff4500;
+.cyber-challenge h3 {
+  color: #00FFFF;
   margin-bottom: 20px;
   text-align: center;
   font-size: 1.4em;
@@ -173,29 +173,29 @@ export default {
 .instructions p {
   margin: 12px 0;
   line-height: 1.6;
-  background: rgba(255, 69, 0, 0.05);
+  background: rgba(0, 255, 255, 0.05);
   padding: 10px;
   border-radius: 8px;
-  border-left: 3px solid #ff4500;
+  border-left: 3px solid #00FFFF;
 }
 
 .code-input-section {
-  background: rgba(255, 69, 0, 0.08);
+  background: rgba(0, 255, 255, 0.08);
   padding: 30px;
   border-radius: 15px;
   margin: 25px 0;
-  border: 3px solid #ff4500;
+  border: 3px solid #00FFFF;
   text-align: center;
 }
 
 .instruction {
   margin-bottom: 25px;
   font-size: 1.2em;
-  color: #ff4500;
-  text-shadow: 0 0 10px #ff4500;
+  color: #00FFFF;
+  text-shadow: 0 0 10px #00FFFF;
 }
 
-.laser-access-container {
+.cyber-access-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -206,16 +206,16 @@ export default {
   margin: 0 auto;
 }
 
-.laser-access-container .code-input,
-.laser-access-container .laser-button {
+.cyber-access-container .code-input,
+.cyber-access-container .connect-button {
   width: 100%;
 }
 
 .code-input {
   padding: 14px 18px;
-  border: 2px solid #ff4500;
-  background-color: rgba(77, 21, 0, 0.85);
-  color: #fff3e0;
+  border: 2px solid #00FFFF;
+  background-color: rgba(30, 60, 114, 0.85);
+  color: #F0F8FF;
   font-size: 1.05em;
   text-align: center;
   border-radius: 12px;
@@ -225,21 +225,21 @@ export default {
   box-sizing: border-box;
   letter-spacing: 1px;
   line-height: 1.2;
-  box-shadow: 0 0 10px rgba(255, 69, 0, 0.25);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.25);
 }
 
 .code-input:focus {
   outline: none;
-  box-shadow: 0 0 25px #ff4500, inset 0 0 15px rgba(255, 69, 0, 0.2);
-  background-color: rgba(77, 34, 0, 0.9);
+  box-shadow: 0 0 25px #00FFFF, inset 0 0 15px rgba(0, 255, 255, 0.2);
+  background-color: rgba(42, 82, 152, 0.9);
   color: white;
 }
 
-.laser-button {
+.connect-button {
   padding: 14px 18px;
-  background: linear-gradient(135deg, #ff4500, #cc2200);
+  background: linear-gradient(135deg, #0080FF, #00FFFF);
   color: white;
-  border: 2px solid #ff4500;
+  border: 2px solid #00FFFF;
   cursor: pointer;
   font-size: 1.05em;
   border-radius: 12px;
@@ -250,34 +250,34 @@ export default {
   width: 230px;
   height: 52px;
   box-sizing: border-box;
-  box-shadow: 0 0 14px rgba(255, 69, 0, 0.35);
+  box-shadow: 0 0 14px rgba(0, 255, 255, 0.35);
   font-family: 'Orbitron', sans-serif;
 }
 
-.laser-button:hover {
-  background: linear-gradient(135deg, #cc2200, #ff4500);
-  box-shadow: 0 0 18px #ff4500, 0 0 30px rgba(255, 69, 0, 0.25);
+.connect-button:hover {
+  background: linear-gradient(135deg, #00FFFF, #0080FF);
+  box-shadow: 0 0 18px #00FFFF, 0 0 30px rgba(0, 255, 255, 0.25);
   transform: translateY(-2px);
 }
 
 .error {
-  color: #FF6B6B;
+  color: #FF4444;
   font-weight: bold;
   margin-top: 15px;
-  background: rgba(255, 107, 107, 0.1);
+  background: rgba(255, 68, 68, 0.1);
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #FF6B6B;
+  border: 1px solid #FF4444;
 }
 
 .success {
-  color: #4CAF50;
+  color: #00FF88;
   font-weight: bold;
   margin-top: 15px;
-  background: rgba(76, 175, 80, 0.1);
+  background: rgba(0, 255, 136, 0.1);
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #4CAF50;
+  border: 1px solid #00FF88;
 }
 
 @media (max-width: 600px) {
@@ -290,7 +290,7 @@ export default {
     max-width: 280px;
   }
   
-  .laser-button {
+  .connect-button {
     width: 100%;
     max-width: 280px;
   }

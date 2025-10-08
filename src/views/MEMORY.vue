@@ -1,24 +1,24 @@
 <template>
   <div class="game-container">
     <div class="game-page">
-      <h1>🔴 LASER LOCKDOWN - SECURITY PROTOCOL</h1>
+      <h1>🧠 MEMORY TRAINING</h1>
       
       <div class="mission-briefing">
-        <p class="location"><strong>Locatie:</strong> 2.09 - Beveiligingscentrum</p>
-        <p class="objective"><strong>Missie:</strong> Ontwijken van lasers</p>
+        <p class="location"><strong>Locatie:</strong> 2.09 - Neurologische Lab</p>
+        <p class="objective"><strong>Missie:</strong> Haal 15 punten</p>
       </div>
 
-      <div class="laser-challenge">
-        <h3>LASER SECURITY NAVIGATION PROTOCOL</h3>
+      <div class="memory-challenge">
+        <h3>💭 Neural Memory Enhancement Protocol</h3>
         <div class="instructions">
-          <p><strong>🔴 Concept:</strong> Navigeer door het beveiligde laserrooster zonder detectie.</p>
-          <p><strong>🎯 Strategieën:</strong> Bestudeer patronen, tijd je bewegingen perfect.</p>
-          <p><strong>🔓 Doel:</strong> Bereik het einde zonder alarmen te activeren!</p>
+          <p><strong>🧠 Concept:</strong> Train je geheugen door patronen te onthouden en je concentratie te verbeteren in deze neuraal-geoptimaliseerde omgeving.</p>
+          <p><strong>⚡ Controles:</strong> Gebruik je korte- en langetermijngeheugen om sequenties en patronen te herkennen en te reproduceren.</p>
+          <p><strong>🎯 Doel:</strong> Bereik 15 punten door succesvol geheugen-challenges te voltooien!</p>
         </div>
         
         <div class="code-input-section">
-          <p class="instruction">Voer de laser-toegangscode in:</p>
-          <div class="laser-access-container">
+          <p class="instruction">Voer de neuraal-toegangscode in:</p>
+          <div class="memory-access-container">
             <input 
               v-model="enteredCode" 
               type="text" 
@@ -26,7 +26,7 @@
               class="code-input"
               @keyup.enter="checkCode"
             />
-            <button @click="checkCode" class="laser-button">EXECUTE LOCKDOWN</button>
+            <button @click="checkCode" class="connect-button">ACTIVATE MEMORY</button>
           </div>
         </div>
       </div>
@@ -44,14 +44,14 @@ import { db } from "@/firebase";
 import { updateDoc, query, where, getDocs, collection, doc } from "firebase/firestore";
 
 export default {
-  name: "LaserLockdown",
+  name: "MemoryGame",
   data() {
     return {
-      correctCode: "Kablam",
+      correctCode: "Pepsi",
       enteredCode: "",
       errorMessage: "",
       successMessage: "",
-      gameimages: [new URL('@/assets/game4/bom.png', import.meta.url).href, new URL('@/assets/game4/bom2.png', import.meta.url).href]
+      gameimages: [new URL('@/assets/game2/agentfromage1.png', import.meta.url).href, new URL('@/assets/game2/agentfromage2.png', import.meta.url).href, new URL('@/assets/game2/agentfromage3.png', import.meta.url).href]
     };
   },
   setup() {
@@ -63,11 +63,11 @@ export default {
   methods: {
     async checkCode() {
       if (this.enteredCode.toUpperCase() === this.correctCode.toUpperCase()) {
-        this.successMessage = "🎉 Lockdown succesvol! Laser protocol voltooid!";
+        this.successMessage = "🎉 Neuraal netwerk geactiveerd! Memory training protocol voltooid!";
         this.errorMessage = "";
         
         // Update voortgang in Pinia store en Firestore
-        this.gameStore.completeGame("game4completed");
+        this.gameStore.completeGame("game2completed");
 
         try {
           const gameInstanceRef = collection(db, "gameinstances");
@@ -76,10 +76,10 @@ export default {
 
           if (!querySnapshot.empty) {
             const playerDoc = querySnapshot.docs[0];
-            await updateDoc(playerDoc.ref, { game4completed: true });
+            await updateDoc(playerDoc.ref, { game2completed: true });
 
             // Zet het spel opnieuw beschikbaar
-            const gameRef = doc(db, "games", "game4");
+            const gameRef = doc(db, "games", "game2");
             await updateDoc(gameRef, { available: true });
           } else {
             console.error("Speler niet gevonden in Firestore!");
@@ -93,7 +93,7 @@ export default {
           this.router.push("/snowowl");
         }, 2000);
       } else {
-        this.errorMessage = "Lockdown mislukt! Controleer je laser toegangscode.";
+        this.errorMessage = "Neuraal toegang geweigerd! Heractiveer je geheugen protocol.";
         this.successMessage = "";
       }
     }
@@ -104,7 +104,7 @@ export default {
 <style scoped>
 .game-container {
   padding: 20px;
-  background: linear-gradient(135deg, #2d0a00 0%, #4d1500 50%, #3d1000 100%);
+  background: linear-gradient(135deg, #1a0d2e 0%, #2d1b4e 50%, #4c2a73 100%);
   background-size: cover;
   min-height: 100vh;
   display: flex;
@@ -116,11 +116,11 @@ export default {
 .game-page {
   text-align: center;
   padding: 30px;
-  background: linear-gradient(135deg, #2d1100 0%, #4d2200 50%, #3d1a00 100%);
-  color: #ff4500;
+  background: linear-gradient(135deg, #2d1b4e 0%, #4c2a73 50%, #1a0d2e 100%);
+  color: #E6B8FF;
   font-family: 'Orbitron', sans-serif;
-  border: 4px solid #ff4500;
-  box-shadow: 0 0 30px #ff4500, inset 0 0 20px rgba(255, 69, 0, 0.1);
+  border: 4px solid #E6B8FF;
+  box-shadow: 0 0 30px #E6B8FF, inset 0 0 20px rgba(230, 184, 255, 0.1);
   max-width: 700px;
   margin: 30px;
   border-radius: 20px;
@@ -129,18 +129,18 @@ export default {
 }
 
 .game-page h1 {
-  color: #ff4500;
-  text-shadow: 0 0 20px #ff4500;
+  color: #E6B8FF;
+  text-shadow: 0 0 20px #E6B8FF;
   margin-bottom: 25px;
   font-size: 2.2em;
   font-weight: bold;
 }
 
 .mission-briefing {
-  background: rgba(255, 69, 0, 0.1);
+  background: rgba(230, 184, 255, 0.1);
   padding: 20px;
   border-radius: 15px;
-  border: 2px solid #ff4500;
+  border: 2px solid #E6B8FF;
   margin: 20px 0;
   text-align: left;
 }
@@ -150,17 +150,17 @@ export default {
   font-size: 1.1em;
 }
 
-.laser-challenge {
+.memory-challenge {
   background: rgba(0, 0, 0, 0.3);
   padding: 25px;
   border-radius: 15px;
-  border-left: 6px solid #ff4500;
+  border-left: 6px solid #E6B8FF;
   margin: 25px 0;
   text-align: left;
 }
 
-.laser-challenge h3 {
-  color: #ff4500;
+.memory-challenge h3 {
+  color: #E6B8FF;
   margin-bottom: 20px;
   text-align: center;
   font-size: 1.4em;
@@ -173,29 +173,29 @@ export default {
 .instructions p {
   margin: 12px 0;
   line-height: 1.6;
-  background: rgba(255, 69, 0, 0.05);
+  background: rgba(230, 184, 255, 0.05);
   padding: 10px;
   border-radius: 8px;
-  border-left: 3px solid #ff4500;
+  border-left: 3px solid #E6B8FF;
 }
 
 .code-input-section {
-  background: rgba(255, 69, 0, 0.08);
+  background: rgba(230, 184, 255, 0.08);
   padding: 30px;
   border-radius: 15px;
   margin: 25px 0;
-  border: 3px solid #ff4500;
+  border: 3px solid #E6B8FF;
   text-align: center;
 }
 
 .instruction {
   margin-bottom: 25px;
   font-size: 1.2em;
-  color: #ff4500;
-  text-shadow: 0 0 10px #ff4500;
+  color: #E6B8FF;
+  text-shadow: 0 0 10px #E6B8FF;
 }
 
-.laser-access-container {
+.memory-access-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -206,16 +206,16 @@ export default {
   margin: 0 auto;
 }
 
-.laser-access-container .code-input,
-.laser-access-container .laser-button {
+.memory-access-container .code-input,
+.memory-access-container .connect-button {
   width: 100%;
 }
 
 .code-input {
   padding: 14px 18px;
-  border: 2px solid #ff4500;
-  background-color: rgba(77, 21, 0, 0.85);
-  color: #fff3e0;
+  border: 2px solid #E6B8FF;
+  background-color: rgba(45, 27, 78, 0.85);
+  color: #F0E8FF;
   font-size: 1.05em;
   text-align: center;
   border-radius: 12px;
@@ -225,21 +225,21 @@ export default {
   box-sizing: border-box;
   letter-spacing: 1px;
   line-height: 1.2;
-  box-shadow: 0 0 10px rgba(255, 69, 0, 0.25);
+  box-shadow: 0 0 10px rgba(230, 184, 255, 0.25);
 }
 
 .code-input:focus {
   outline: none;
-  box-shadow: 0 0 25px #ff4500, inset 0 0 15px rgba(255, 69, 0, 0.2);
-  background-color: rgba(77, 34, 0, 0.9);
+  box-shadow: 0 0 25px #E6B8FF, inset 0 0 15px rgba(230, 184, 255, 0.2);
+  background-color: rgba(76, 42, 115, 0.9);
   color: white;
 }
 
-.laser-button {
+.connect-button {
   padding: 14px 18px;
-  background: linear-gradient(135deg, #ff4500, #cc2200);
+  background: linear-gradient(135deg, #9B59B6, #E6B8FF);
   color: white;
-  border: 2px solid #ff4500;
+  border: 2px solid #E6B8FF;
   cursor: pointer;
   font-size: 1.05em;
   border-radius: 12px;
@@ -250,13 +250,13 @@ export default {
   width: 230px;
   height: 52px;
   box-sizing: border-box;
-  box-shadow: 0 0 14px rgba(255, 69, 0, 0.35);
+  box-shadow: 0 0 14px rgba(230, 184, 255, 0.35);
   font-family: 'Orbitron', sans-serif;
 }
 
-.laser-button:hover {
-  background: linear-gradient(135deg, #cc2200, #ff4500);
-  box-shadow: 0 0 18px #ff4500, 0 0 30px rgba(255, 69, 0, 0.25);
+.connect-button:hover {
+  background: linear-gradient(135deg, #E6B8FF, #9B59B6);
+  box-shadow: 0 0 18px #E6B8FF, 0 0 30px rgba(230, 184, 255, 0.25);
   transform: translateY(-2px);
 }
 
@@ -290,7 +290,7 @@ export default {
     max-width: 280px;
   }
   
-  .laser-button {
+  .connect-button {
     width: 100%;
     max-width: 280px;
   }

@@ -1,50 +1,39 @@
-
 <template>
-  <div class="container">
-    <div class="opening">
-      <h1>Laser</h1>
-      <h1>L🔒ckdown</h1>
-    </div>
+  <div class="game-container">
+    <div class="game-page">
+      <h1>📶 FLAPPY WIFI</h1>
+      
+      <div class="mission-briefing">
+        <p class="location"><strong>Locatie:</strong> 2.09 - Netwerklab - Signaal Testzone</p>
+        <p class="objective"><strong>Missie:</strong> Navigeer je wifi-signaal door netwerkobstakels</p>
+      </div>
 
-    <!-- Overlay met uitlegstappen -->
-    <div v-if="showOverlay" class="overlay">  
-      <div class="overlay-content">
-        <h2>Speluitleg</h2>
-        <p>{{ steps[currentStep] }}</p>
-
-        <!-- Code invoerveld verschijnt bij de laatste stap -->
-        <div v-if="currentStep === steps.length - 1">
-          <label for="codeInput">Voer de code in:</label>
-
-          <!-- ✅ Toon alleen input en button als de code nog niet correct is -->
-          <div v-if="!codeCorrect">
-            <input 
-              type="text" 
-              id="codeInput" 
-              v-model="enteredCode" 
-              placeholder="4567"
-            />
-            <button @click="submitCode">Submit</button>
-            <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p> <!-- ❌ Foutmelding -->
-          </div>
-
-          <!-- ✅ Gefeliciteerd bericht bij juiste code -->
-          <p v-else class="success-text">🎉 Gefeliciteerd, je hebt de code geraden! 🎉</p>
+      <div class="wifi-challenge">
+        <h3>🌐 Wifi Signal Navigation Protocol</h3>
+        <div class="instructions">
+          <p><strong>📡 Concept:</strong> Stuur je wifi-signaal door een complexe netwerkomgeving vol obstakels zoals firewalls, routers en interferentie.</p>
+          <p><strong>⚡ Controles:</strong> Gebruik timing en reflexen om je signaal stabiel te houden terwijl je door het netwerk navigeert.</p>
+          <p><strong>🎯 Doel:</strong> Bereik het eindpunt zonder je verbinding te verliezen!</p>
         </div>
-
-        <!-- Navigatie knoppen -->
-        <div class="buttons">
-          <button @click="prevStep" :disabled="currentStep === 0">Vorige</button>
-          <button @click="nextStep" :disabled="currentStep === steps.length - 1">Volgende</button>
+        
+        <div class="code-input-section">
+          <p class="instruction">Voer de wifi-toegangscode in:</p>
+          <div class="wifi-access-container">
+            <input 
+              v-model="enteredCode" 
+              type="text" 
+              placeholder="Code..." 
+              class="code-input"
+              @keyup.enter="checkCode"
+            />
+            <button @click="checkCode" class="connect-button">CONNECT SIGNAL</button>
+          </div>
         </div>
       </div>
+      
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      <p v-if="successMessage" class="success">{{ successMessage }}</p>
     </div>
-    <!-- <div class="game-images">
-      <img :src="gameimages[0]" class="gameimage" />
-      <img :src="gameimages[1]" class="gameimage" />
-      <img :src="gameimages[2]" class="gameimage" />
-      <img :src="gameimages[3]" class="gameimage" />
-    </div> -->
   </div>
 </template>
 
@@ -55,24 +44,14 @@ import { db } from "@/firebase";
 import { updateDoc, query, where, getDocs, collection, doc } from "firebase/firestore";
 
 export default {
-  name: "LaserLockdown",
+  name: "FlappyWifi",
   data() {
     return {
-      showOverlay: true,
-      currentStep: 0,
+      correctCode: "100101",
       enteredCode: "",
-      correctCode: "1234",
-      codeCorrect: false, // ✅ Nieuwe statusvariabele
-      errorMessage: "", // ❌ Voor foutmelding
-      gameimages: [new URL('@/assets/game3/laser1.png', import.meta.url).href, new URL('@/assets/game3/laser2.png', import.meta.url).href, new URL('@/assets/game3/laser3.png', import.meta.url).href, new URL('@/assets/game3/laser4.png', import.meta.url).href],
-      steps: [
-        "Welkom bij Laser Lockdown! 🚀 Ga naar lokaal 2.07 om de game te spelen",
-        "In het spel verbind lasers met spiegels om de deur te openen en te ontsnappen!",
-        "Gebruik de spiegels om de laserstraal in de juiste richting te sturen.",
-        "Sommige levels hebben obstakels die je moet omzeilen. Denk strategisch na!",
-        "Als de laser de juiste plek bereikt, wordt de deur ontgrendeld en kun je ontsnappen!",
-        "Veel succes en veel plezier! 🎉 Klik op 'Volgende' voor de code om te ontsnappen."
-      ]
+      errorMessage: "",
+      successMessage: "",
+      gameimages: [new URL('@/assets/game3/laser1.png', import.meta.url).href, new URL('@/assets/game3/laser2.png', import.meta.url).href, new URL('@/assets/game3/laser3.png', import.meta.url).href, new URL('@/assets/game3/laser4.png', import.meta.url).href]
     };
   },
   setup() {
@@ -82,21 +61,12 @@ export default {
     };
   },
   methods: {
-    nextStep() {
-      if (this.currentStep < this.steps.length - 1) {
-        this.currentStep++;
-      }
-    },
-    prevStep() {
-      if (this.currentStep > 0) {
-        this.currentStep--;
-      }
-    },
-    async submitCode() {
-      if (this.enteredCode === this.correctCode) {
-        this.codeCorrect = true; // ✅ Zet status op correct
-
-        // 🔹 Update voortgang in Pinia store en Firestore
+    async checkCode() {
+      if (this.enteredCode.toUpperCase() === this.correctCode.toUpperCase()) {
+        this.successMessage = "🎉 Wifi verbinding succesvol! Signal navigation protocol voltooid!";
+        this.errorMessage = "";
+        
+        // Update voortgang in Pinia store en Firestore
         this.gameStore.completeGame("game3completed");
 
         try {
@@ -108,7 +78,7 @@ export default {
             const playerDoc = querySnapshot.docs[0];
             await updateDoc(playerDoc.ref, { game3completed: true });
 
-            // 🔹 Zet het spel opnieuw beschikbaar
+            // Zet het spel opnieuw beschikbaar
             const gameRef = doc(db, "games", "game3");
             await updateDoc(gameRef, { available: true });
           } else {
@@ -118,12 +88,13 @@ export default {
           console.error("Fout bij updaten van Firestore:", error);
         }
 
-        // 🔹 Stuur speler na 2 seconden naar /snowowl
+        // Stuur speler na 2 seconden naar /snowowl
         setTimeout(() => {
           this.router.push("/snowowl");
         }, 2000);
       } else {
-        this.errorMessage = "❌ Helaas, probeer het nog een keer."; // ❌ Toon foutmelding
+        this.errorMessage = "Verbinding mislukt! Controleer je wifi-toegangscode.";
+        this.successMessage = "";
       }
     }
   }
@@ -131,156 +102,202 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  margin-top: 5vh;
-  font-family: 'Sixtyfour Convergence', sans-serif;
-  background-color: #0f0b45;
-  text-align: center;
+.game-container {
+  padding: 20px;
+  background: linear-gradient(135deg, #001122 0%, #003366 50%, #004488 100%);
+  background-size: cover;
   min-height: 100vh;
-  color: white;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.opening h1 {
-  font-size: 3em;
+.game-page {
+  text-align: center;
+  padding: 30px;
+  background: linear-gradient(135deg, #002244 0%, #003366 50%, #001133 100%);
+  color: #00BFFF;
+  font-family: 'Orbitron', sans-serif;
+  border: 4px solid #00BFFF;
+  box-shadow: 0 0 30px #00BFFF, inset 0 0 20px rgba(0, 191, 255, 0.1);
+  max-width: 700px;
+  margin: 30px;
+  border-radius: 20px;
+  position: relative;
+  z-index: 2;
 }
 
-.overlay {
-  background: rgba(20, 20, 50, 0.95);
+.game-page h1 {
+  color: #00BFFF;
+  text-shadow: 0 0 20px #00BFFF;
+  margin-bottom: 25px;
+  font-size: 2.2em;
+  font-weight: bold;
+}
+
+.mission-briefing {
+  background: rgba(0, 191, 255, 0.1);
+  padding: 20px;
+  border-radius: 15px;
+  border: 2px solid #00BFFF;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.location, .objective {
+  margin: 12px 0;
+  font-size: 1.1em;
+}
+
+.wifi-challenge {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 25px;
+  border-radius: 15px;
+  border-left: 6px solid #00BFFF;
+  margin: 25px 0;
+  text-align: left;
+}
+
+.wifi-challenge h3 {
+  color: #00BFFF;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.4em;
+}
+
+.instructions {
+  margin: 20px 0;
+}
+
+.instructions p {
+  margin: 12px 0;
+  line-height: 1.6;
+  background: rgba(0, 191, 255, 0.05);
+  padding: 10px;
+  border-radius: 8px;
+  border-left: 3px solid #00BFFF;
+}
+
+.code-input-section {
+  background: rgba(0, 191, 255, 0.08);
   padding: 30px;
   border-radius: 15px;
+  margin: 25px 0;
+  border: 3px solid #00BFFF;
   text-align: center;
-  max-width: 450px;
-  border: 2px solid #00ffff;
-  box-shadow: 0 0 15px #00ffff;
-  animation: fadeIn 0.5s ease-in-out;
-  margin: 20px;
 }
 
-.overlay h2 {
-  color: #ff00ff;
-  text-shadow: 0 0 10px #ff00ff;
-  font-size: 2em;
-}
-
-.overlay p {
-  margin-bottom: 20px;
-  font-size: 1.1em;
-  color: #ddd;
-  line-height: 1.5;
-}
-
-.buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-.buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-.overlay-content button {
-  padding: 10px 15px;
-  font-size: 1.1em;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  color: white;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: all 0.3s ease-in-out;
-}
-
-.overlay-content button {
-  background: linear-gradient(90deg, #ff00ff, #00ffff);
-  box-shadow: 0 0 10px #ff00ff;
-}
-
-.buttons button {
-  padding: 10px 15px;
-  font-size: 1.1em;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  color: white;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: all 0.3s ease-in-out;
-}
-
-.buttons button:first-child {
-  background: linear-gradient(90deg, #ff00ff, #00ffff);
-  box-shadow: 0 0 10px #ff00ff;
-}
-
-.buttons button:first-child:hover {
-  background: linear-gradient(90deg, #00ffff, #ff00ff);
-  box-shadow: 0 0 20px #00ffff;
-}
-
-.buttons button:last-child {
-  background: linear-gradient(90deg, #ff4500, #ff0000);
-  box-shadow: 0 0 10px #ff0000;
-}
-
-.buttons button:last-child:hover {
-  background: linear-gradient(90deg, #ff0000, #ff4500);
-  box-shadow: 0 0 20px #ff4500;
-}
-
-input {
-  padding: 10px;
-  margin-top: 10px;
-  font-size: 1.1em;
-  border-radius: 5px;
-  border: 1px solid #00ffff;
-  background-color: #1a1a3d;
-  color: white;
-}
-
-input:focus {
-  border-color: #ff00ff;
-  outline: none;
-}
-
-.error-text {
-  color: #ff4d4d;
-  margin-top: 10px;
+.instruction {
+  margin-bottom: 25px;
   font-size: 1.2em;
+  color: #00BFFF;
+  text-shadow: 0 0 10px #00BFFF;
 }
 
-.success-text {
-  color: #00ff00;
-  font-size: 1.4em;
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.gameimages {
+.wifi-access-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
 }
-.gameimage {
-  max-width: 80%;
-  border:#000000;
-  border-radius: 10px;
-  margin: 10px;
+
+.wifi-access-container .code-input,
+.wifi-access-container .connect-button {
+  width: 100%;
+}
+
+.code-input {
+  padding: 14px 18px;
+  border: 2px solid #00BFFF;
+  background-color: rgba(0, 34, 68, 0.85);
+  color: #E0E8F0;
+  font-size: 1.05em;
+  text-align: center;
+  border-radius: 12px;
+  font-weight: 600;
+  width: 230px;
+  height: 52px;
+  box-sizing: border-box;
+  letter-spacing: 1px;
+  line-height: 1.2;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.25);
+}
+
+.code-input:focus {
+  outline: none;
+  box-shadow: 0 0 25px #00BFFF, inset 0 0 15px rgba(0, 191, 255, 0.2);
+  background-color: rgba(0, 51, 102, 0.9);
+  color: white;
+}
+
+.connect-button {
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #00A2FF, #00C8FF);
+  color: white;
+  border: 2px solid #00BFFF;
+  cursor: pointer;
+  font-size: 1.05em;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  white-space: nowrap;
+  width: 230px;
+  height: 52px;
+  box-sizing: border-box;
+  box-shadow: 0 0 14px rgba(0, 191, 255, 0.35);
+  font-family: 'Orbitron', sans-serif;
+}
+
+.connect-button:hover {
+  background: linear-gradient(135deg, #00C8FF, #00A2FF);
+  box-shadow: 0 0 18px #00BFFF, 0 0 30px rgba(0, 191, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.error {
+  color: #FF6B6B;
+  font-weight: bold;
+  margin-top: 15px;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #FF6B6B;
+}
+
+.success {
+  color: #4CAF50;
+  font-weight: bold;
+  margin-top: 15px;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #4CAF50;
+}
+
+@media (max-width: 600px) {
+  .input-container {
+    max-width: 280px;
+  }
+  
+  .code-input {
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .connect-button {
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .game-page {
+    padding: 20px;
+    margin: 15px;
+  }
 }
 </style>
